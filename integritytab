@@ -1,0 +1,15 @@
+# Name uuid [optional options which are seperated by a ,]
+#
+# If integrity device is a partition, you must use partition uuid here (ID_PART_ENTRY_UUID),
+# otherwise block ID_WWN is required.
+#
+# Some examples 
+# fubar 235e0f38-8c08-2b4c-acb3-719f9265f5f5 journal-commit-time=10,allow-discards,integrity-key-size=4
+# foobar 235e0f38-8c08-2b4c-acb3-719f9265f5f5 allow-discards
+
+# test 235e0f38-8c08-2b4c-acb3-719f9265f5f5
+# test b570ff82-0573-a244-8463-e341b7c7e138 allow-discards,journal-commit-time=10
+# test2 f4a8b0ca-dfdc-da49-a6ea-72689d86cb7d
+
+# Using WWID
+# test3 0x0000000000bc614e

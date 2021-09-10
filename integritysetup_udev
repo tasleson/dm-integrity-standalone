@@ -1,0 +1,57 @@
+#!/bin/bash
+
+BIN=/usr/sbin/integritysetup
+
+# Syntax: integritysetup_udev device_node [partition entry UUID|block device WWN]
+
+if [ "$#" -ne 2 ]; then
+    echo "Invalid number of arguments, syntax: device_node uuid"
+    exit 2
+fi
+
+DEV_NODE=$1
+SEARCH=$2
+
+# Process the comma separated list of optional options
+handle_options()
+{
+    local cmd_line=""
+    local options_list=$1
+
+    IFS=',' read -ra OPT <<< "$options_list"
+    for i in "${OPT[@]}"; do
+        if [[ "$i" == *"="* ]]; then
+            p=( ${i//=/ } )
+	    cmd_line+=" --${p[0]} ${p[1]}"
+	else
+	    cmd_line+=" --$i"
+	fi
+    
+    done
+
+    echo "$cmd_line"
+
+}
+
+# Open /etc/integritytab and find the matching line, when found verify that
+# /dev/mapper/name doesn't already exist and bring it up.
+
+while read -r name uuid options
+do
+   # Skip lines that start with # or are empty
+   if [ "$name" = "#" ] ||  [ "$name" = "" ]; then
+       continue
+   fi
+
+   if [ "$uuid" = "$SEARCH" ]; then
+       if [ ! -e "/dev/mapper/$name" ]; then
+          opts=$(handle_options $options)
+          $BIN open $DEV_NODE $name $opts
+	  exit $?
+       fi
+       exit 0
+   fi
+
+done < /etc/integritytab
+
+exit 1
